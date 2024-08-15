@@ -6,6 +6,7 @@ function App() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<number | null>(null);
+  const [selectedPost, setSelectedPost] = useState<number | null>(null);
 
   useEffect(() => {
     const getPosts = async () => {
@@ -29,32 +30,51 @@ function App() {
 
   const handleSelectUser = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const userId = parseInt(event.target.value, 10);
+    console.log(typeof userId, userId);
     setSelectedUser(userId);
   };
 
-  const filteredPosts = posts.filter((post) => post.userId === selectedUser);
+  const handleSelectPost = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const postId = parseInt(event.target.value, 10);
+
+    setSelectedPost(postId);
+  };
+
+  const filteredPosts = selectedUser
+    ? posts.filter((post) => post.userId === selectedUser)
+    : posts;
+
+  const postToRender = filteredPosts.find((post) => post.id === selectedPost);
 
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="select-container">
-      <select name="users" id="select-users" onChange={handleSelectUser}>
-        <option value="">Users</option>
-        {uniqueUserIds.map((userId) => (
-          <option key={userId} value={userId}>
-            User: {userId}
-          </option>
-        ))}
-      </select>
-      <select name="posts" id="select-posts">
-        <option value="">Posts</option>
-        {filteredPosts.map((post) => (
-          <option key={post.id} value={post.id}>
-            {post.title}
-          </option>
-        ))}
-      </select>
-    </div>
+    <>
+      <div className="select-container">
+        <select name="users" id="select-users" onChange={handleSelectUser}>
+          <option value="">Users</option>
+          {uniqueUserIds.map((userId) => (
+            <option key={userId} value={userId}>
+              User: {userId}
+            </option>
+          ))}
+        </select>
+        <select name="posts" id="select-posts" onChange={handleSelectPost}>
+          <option value="">Posts</option>
+          {filteredPosts.map((post) => (
+            <option key={post.id} value={post.id}>
+              {post.title}
+            </option>
+          ))}
+        </select>
+      </div>
+      {postToRender && (
+        <div>
+          <h1>{postToRender.title}</h1>
+          <p>{postToRender.body}</p>
+        </div>
+      )}
+    </>
   );
 }
 
