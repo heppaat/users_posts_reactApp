@@ -12,7 +12,7 @@ function App() {
     const getPosts = async () => {
       try {
         const posts = await fetchData();
-        console.log(posts);
+
         setPosts(posts);
       } catch (error) {
         setError((error as Error).message || "An error occurred");
@@ -49,7 +49,7 @@ function App() {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <>
+    <main className="app-container">
       <div className="select-container">
         <select name="users" id="select-users" onChange={handleSelectUser}>
           <option value="">Users</option>
@@ -68,13 +68,14 @@ function App() {
           ))}
         </select>
       </div>
+
       {postToRender && (
-        <div>
+        <div className="post-container">
           <h1>{postToRender.title}</h1>
           <p>{postToRender.body}</p>
         </div>
       )}
-    </>
+    </main>
   );
 }
 
