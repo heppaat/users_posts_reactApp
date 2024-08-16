@@ -6,6 +6,11 @@
   height: 100vh;
 }
 
+.get-post {
+  position: absolute;
+  top: 35%;
+}
+
 .select-container {
   display: flex;
   justify-content: space-evenly;
