@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import { fetchData, Post } from "./services/get";
+import { postData } from "./services/post";
 
 function App() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -12,6 +13,8 @@ function App() {
   const [selectedUserForNewPost, setSelectedUserForNewPost] = useState<
     number | null
   >(null);
+  const [newPostTitle, setNewPostTitle] = useState<string>("");
+  const [newPostBody, setNewPostBody] = useState<string>("");
 
   useEffect(() => {
     const getPosts = async () => {
@@ -53,11 +56,34 @@ function App() {
 
   //WRITE A NEW POST LOGIC
 
-  const handleSelecUserForNewPost = (
+  const handleSelectUserForNewPost = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const userIdNewPost = parseInt(event.target.value, 10);
     setSelectedUserForNewPost(userIdNewPost);
+  };
+
+  const handlePostButton = async () => {
+    if (!selectedUserForNewPost || !newPostTitle || !newPostBody) {
+      setError("Please fill in all fields");
+      return;
+    }
+
+    try {
+      const newPost = await postData({
+        userId: selectedUserForNewPost,
+        title: newPostTitle,
+        body: newPostBody,
+      });
+
+      setPosts([...posts, newPost]);
+      setSelectedUserForNewPost(null);
+      setNewPostTitle("");
+      setNewPostBody("");
+      setError(null);
+    } catch (error) {
+      setError((error as Error).message || "Failed to create post");
+    }
   };
 
   if (error) return <div>Error: {error}</div>;
@@ -92,13 +118,14 @@ function App() {
           </div>
         )}
       </main>
+
       <main>
         <h1>Write a new Post</h1>
         <div>
           <select
             name="users-for-post"
             id="post-users"
-            onChange={handleSelecUserForNewPost}
+            onChange={handleSelectUserForNewPost}
           >
             <option value="">Users</option>
             {uniqueUserIds.map((userId) => (
@@ -108,6 +135,22 @@ function App() {
             ))}
           </select>
         </div>
+        <div>
+          <h2>Post title</h2>
+          <input
+            value={newPostTitle}
+            type="text"
+            onChange={(e) => setNewPostTitle(e.target.value)}
+          />
+        </div>
+        <div>
+          <h2>Post body</h2>
+          <textarea
+            value={newPostBody}
+            onChange={(e) => setNewPostBody(e.target.value)}
+          ></textarea>
+        </div>
+        <button onClick={handlePostButton}>Post</button>
       </main>
     </>
   );

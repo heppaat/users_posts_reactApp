@@ -46,7 +46,7 @@ server.post("/api/posts", async (req, res) => {
       `${__dirname}/../database/data.json`,
       JSON.stringify(posts, null, 2)
     );
-    res.json({ id: randomNumber });
+    res.json(newPost);
   } catch (error) {
     console.error("Error writing file", error);
     res.sendStatus(500);
