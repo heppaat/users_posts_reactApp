@@ -37,7 +37,12 @@ server.post("/api/posts", async (req, res) => {
   if (!posts) return res.sendStatus(500);
   const randomNumber = Math.floor(Math.random() * (1000 - 150 + 1)) + 150;
 
-  const newPost = { ...result, id: randomNumber };
+  const newPost = {
+    userId: result.userId,
+    id: randomNumber,
+    title: result.title,
+    body: result.body,
+  };
 
   posts.push(newPost);
 

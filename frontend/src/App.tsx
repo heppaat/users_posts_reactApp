@@ -16,16 +16,16 @@ function App() {
   const [newPostTitle, setNewPostTitle] = useState<string>("");
   const [newPostBody, setNewPostBody] = useState<string>("");
 
-  useEffect(() => {
-    const getPosts = async () => {
-      try {
-        const posts = await fetchData();
+  const getPosts = async () => {
+    try {
+      const posts = await fetchData();
 
-        setPosts(posts);
-      } catch (error) {
-        setError((error as Error).message || "An error occurred");
-      }
-    };
+      setPosts(posts);
+    } catch (error) {
+      setError((error as Error).message || "An error occurred");
+    }
+  };
+  useEffect(() => {
     getPosts();
   }, []);
 
@@ -81,6 +81,8 @@ function App() {
       setNewPostTitle("");
       setNewPostBody("");
       setError(null);
+
+      await getPosts();
     } catch (error) {
       setError((error as Error).message || "Failed to create post");
     }
@@ -119,7 +121,7 @@ function App() {
         )}
       </main>
 
-      <main>
+      <main className="new-post">
         <h1>Write a new Post</h1>
         <div>
           <select
